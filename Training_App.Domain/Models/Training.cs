@@ -13,7 +13,7 @@ namespace Training_App.Models
         }
         public Guid Id { get;}
         public string Typename { get;} = string.Empty;
-        public DateTime Date { get;}
+        public DateTime Date { get; }
         public DateTime EndTime { get;}
 
         public static Result<Training> Create(Guid id, string typename, DateTime date, Guid applicationUserId)
@@ -22,7 +22,7 @@ namespace Training_App.Models
             {
                 return Result.Failure<Training>($"'{nameof(Training)} cannot be null or empty");
             }
-            var training = new Training(id, typename, DateTime.Now, DateTime.Now);
+            var training = new Training(id, typename, DateTime.Today, DateTime.Now);
 
             return Result.Success<Training>(training);
         }
