@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Training_App.Configuration;
-using Training_App.Models;
+using Training_App.DataAccess.Configuration;
+using Training_App.DataAccess.Entity;
 
-namespace Training_App;
+namespace Training_App.DataAccess;
 
 public class TrainingAppDbContext(DbContextOptions<TrainingAppDbContext> options) 
     : DbContext(options)
 {
-    public DbSet<Training> Trainings { get; set; }
-    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-    public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<TrainingEntity> Trainings { get; set; }
+    public DbSet<ApplicationUserEntity> ApplicationUsers { get; set; }
+    public DbSet<ExerciseEntity> Exercises { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

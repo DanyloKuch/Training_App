@@ -1,4 +1,4 @@
-using Training_App;
+using Training_App.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

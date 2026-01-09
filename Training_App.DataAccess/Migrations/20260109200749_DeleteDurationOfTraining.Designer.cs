@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Training_App;
+using Training_App.DataAccess;
 
 #nullable disable
 
-namespace Training_App.Migrations
+namespace Training_App.DataAccess.Migrations
 {
     [DbContext(typeof(TrainingAppDbContext))]
-    partial class TrainingAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260109200749_DeleteDurationOfTraining")]
+    partial class DeleteDurationOfTraining
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,22 +25,22 @@ namespace Training_App.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ExerciseTraining", b =>
+            modelBuilder.Entity("ExerciseEntityTrainingEntity", b =>
                 {
-                    b.Property<Guid>("ExerciseId")
+                    b.Property<Guid>("ExerciseEntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TrainingId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ExerciseId", "TrainingId");
+                    b.HasKey("ExerciseEntityId", "TrainingId");
 
                     b.HasIndex("TrainingId");
 
-                    b.ToTable("ExerciseTraining");
+                    b.ToTable("ExerciseEntityTrainingEntity");
                 });
 
-            modelBuilder.Entity("Training_App.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Training_App.DataAccess.Entity.ApplicationUserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +55,7 @@ namespace Training_App.Migrations
                     b.ToTable("ApplicationUsers");
                 });
 
-            modelBuilder.Entity("Training_App.Models.Exercise", b =>
+            modelBuilder.Entity("Training_App.DataAccess.Entity.ExerciseEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,9 +67,6 @@ namespace Training_App.Migrations
                     b.Property<int>("CountOfWurmUpSets")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Duration")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Muscles")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -75,21 +75,21 @@ namespace Training_App.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Weight")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Exercises");
                 });
 
-            modelBuilder.Entity("Training_App.Models.Training", b =>
+            modelBuilder.Entity("Training_App.DataAccess.Entity.TrainingEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ApplicationUserId")
+                    b.Property<Guid>("ApplicationUserEntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
@@ -98,49 +98,46 @@ namespace Training_App.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Typename")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("ApplicationUserEntityId");
 
                     b.ToTable("Trainings");
                 });
 
-            modelBuilder.Entity("ExerciseTraining", b =>
+            modelBuilder.Entity("ExerciseEntityTrainingEntity", b =>
                 {
-                    b.HasOne("Training_App.Models.Exercise", null)
+                    b.HasOne("Training_App.DataAccess.Entity.ExerciseEntity", null)
                         .WithMany()
-                        .HasForeignKey("ExerciseId")
+                        .HasForeignKey("ExerciseEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Training_App.Models.Training", null)
+                    b.HasOne("Training_App.DataAccess.Entity.TrainingEntity", null)
                         .WithMany()
                         .HasForeignKey("TrainingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Training_App.Models.Training", b =>
+            modelBuilder.Entity("Training_App.DataAccess.Entity.TrainingEntity", b =>
                 {
-                    b.HasOne("Training_App.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("Training")
-                        .HasForeignKey("ApplicationUserId")
+                    b.HasOne("Training_App.DataAccess.Entity.ApplicationUserEntity", "ApplicationUserEntity")
+                        .WithMany("TrainingEntity")
+                        .HasForeignKey("ApplicationUserEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("ApplicationUserEntity");
                 });
 
-            modelBuilder.Entity("Training_App.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Training_App.DataAccess.Entity.ApplicationUserEntity", b =>
                 {
-                    b.Navigation("Training");
+                    b.Navigation("TrainingEntity");
                 });
 #pragma warning restore 612, 618
         }
