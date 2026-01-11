@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace Training_App.Models
+namespace Training_App.Domain.Models
 {
     public class Training
     {
