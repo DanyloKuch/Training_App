@@ -21,4 +21,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Training_App.Application\Training_App.Application.csproj" />
+    <ProjectReference Include="..\Training_App.Domain\Training_App.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,8 @@
-using Training_App.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using Training_App.Application.Services;
+using Training_App.DataAccess;
+using Training_App.DataAccess.Repository;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +15,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<TrainingAppDbContext>(options => 
    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IExercisesService, ExercisesService>();
+builder.Services.AddScoped<IExercisesRepository, ExercisesRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

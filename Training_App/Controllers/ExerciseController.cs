@@ -1,37 +1,72 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using System.Data.Entity;
-//using Training_App.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Training_App.Api.Contracts;
+using Training_App.Application.Services;
+using Training_App.Domain.Models;
 
-//namespace Training_App.Controllers;
-//public class ExerciseController
-//{
-//    private readonly TrainingAppDbContext _dbContext;
-//    public ExerciseController(TrainingAppDbContext context)
-//    {
-//        _dbContext = context;
-//    }
+namespace Training_App.Controllers;
+[ApiController]
+[Route("api/[controller]")]
+public class ExerciseController: ControllerBase
+{
+    private readonly IExercisesService _exercisesService;
 
-//    public async Task<IActionResult> Get()
-//    {
-//        var exercises = await _dbContext.Exercises
-//            .AsNoTracking()
-//            .ToListAsync();
-//        return Ok(exercises);
-//    }
-//    [HttpGet("{id}")]
-//    public async Task<Exercise?> GetById(Guid id)
-//    {
-//        return await _dbContext.Exercises
-//            .AsNoTracking()
-//            .FirstOrDefaultAsync(e => e.Id == id);
-//    }
+    public ExerciseController(IExercisesService exercisesService)    
+    {
+        _exercisesService = exercisesService;
+    }
 
-//    public async Task<IActionResult> Post([FromBody] Exercise exercise)
-//    {
-//        exercise.Id = Guid.NewGuid();
-//        _dbContext.Exercises.Add(exercise);
-//        await _dbContext.SaveChangesAsync();
-//        return CreatedAtAction(nameof(GetById), new { id = exercise.Id }, exercise);
-//    }
-//}
+    [HttpGet]
+    public async Task<ActionResult<List<ExerciseResponse>>> GetAllExercises()
+    {
+        var exercises = await _exercisesService.GetAllExercises();
+        var response = exercises.Select(e => new ExerciseResponse(
+            e.Id,
+            e.Name,
+            e.Muscles,
+            e.CountOfBasicSets,
+            e.CountOfWurmUpSets,
+            e.Weight));
+
+        return Ok(response); 
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ExerciseResponse>> GetExerciseById(Guid id)
+    {
+        var exercise = await _exercisesService.GetExerciseById(id);
+        if (exercise == null)
+        {
+            return NotFound();
+        }
+        var response = new ExerciseResponse(
+            exercise.Id,
+            exercise.Name,
+            exercise.Muscles,
+            exercise.CountOfBasicSets,
+            exercise.CountOfWurmUpSets,
+            exercise.Weight);
+        return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Guid>> CreateExercise([FromBody] ExerciseRequest request)
+    {
+        var (exercise, error) = Exercise.Create(
+            Guid.NewGuid(),
+            request.Name,
+            request.Muscles,
+            request.CountOfBasicSets,
+            request.CountOfWurmUpSets,
+            request.Weight);
+        if (!string.IsNullOrEmpty(error))
+        {
+            return BadRequest(error);
+        }
+
+        var exerciseid = await _exercisesService.CreateExercise(exercise);
+
+        return Ok(exerciseid);
+    }
+
+}
 

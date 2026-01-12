@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Training_App.DataAccess.Repository;
+﻿using Training_App.DataAccess.Repository;
 using Training_App.Domain.Models;
 
 namespace Training_App.Application.Services
