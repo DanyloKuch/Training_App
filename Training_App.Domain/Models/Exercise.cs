@@ -22,18 +22,6 @@ namespace Training_App.Domain.Models
         public int CountOfWurmUpSets { get; }
         public decimal Weight { get; } 
 
-        //public static Result<Exercise> Create(Guid id, string name, string muscles, int countOfBasicSets, int countOfWurmUpSets, decimal weight)
-        //{
-        //    if (string.IsNullOrEmpty(name))
-        //    {
-        //        return Result.Failure<Exercise>($"'{nameof(Exercise)} cannot be null or empty");
-        //    }
-        //    var exercise = new Exercise(id, name, muscles, countOfBasicSets, countOfWurmUpSets, weight);
-            
-        //    return Result.Success<Exercise>(exercise);
-        //}
-
-
         public static (Exercise Exercise, string Error) Create(Guid id, string name, string muscles, int countOfBasicSets, int countOfWurmUpSets, decimal weight)
         {
             var error = string.Empty;

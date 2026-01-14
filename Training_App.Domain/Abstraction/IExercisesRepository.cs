@@ -6,7 +6,7 @@ namespace Training_App.DataAccess.Repository
     {
         Task<Guid> Create(Exercise exercise);
         Task<Guid> Delete(Guid id);
-        Task<List<Exercise>> Get();
+        Task<List<Exercise>> GetALl();
         Task<Exercise?> GetById(Guid id);
         Task<Guid> Update(Guid id, string name, string muscles, int countOfBasicSets, int countOfWurmUpSets, decimal weight);
     }

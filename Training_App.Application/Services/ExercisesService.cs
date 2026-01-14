@@ -14,7 +14,7 @@ namespace Training_App.Application.Services
 
         public async Task<List<Exercise>> GetAllExercises()
         {
-            return await _exercisesRepository.Get();
+            return await _exercisesRepository.GetALl();
         }
 
         public async Task<Guid> CreateExercise(Exercise exercise)

@@ -16,7 +16,7 @@ namespace Training_App.Domain.Models
         public DateTime Date { get; }
         public DateTime EndTime { get;}
 
-        public static Result<Training> Create(Guid id, string typename, DateTime date, Guid applicationUserId)
+        public static Result<Training> Create(Guid id, string typename, DateTime date, DateTime endTime)
         {
             if (string.IsNullOrEmpty(typename))
             {

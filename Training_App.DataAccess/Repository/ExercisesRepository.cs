@@ -14,7 +14,7 @@ public class ExercisesRepository : IExercisesRepository
         _context = context;
     }
 
-    public async Task<List<Exercise>> Get()
+    public async Task<List<Exercise>> GetALl()
     {
         var exerciseEntities = await _context.Exercises
             .AsNoTracking()
