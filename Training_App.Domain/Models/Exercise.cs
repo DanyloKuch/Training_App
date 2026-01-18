@@ -1,5 +1,4 @@
-﻿//using CSharpFunctionalExtensions;
-using System;
+﻿using System;
 
 
 namespace Training_App.Domain.Models

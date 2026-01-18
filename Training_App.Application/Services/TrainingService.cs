@@ -11,9 +11,9 @@ namespace Training_App.Application.Services
 {
     public class TrainingService : ITrainingService
     {
-        private readonly ITrainingRepositury _trainingRepositury;
+        private readonly ITrainingRepository _trainingRepositury;
 
-        public TrainingService(ITrainingRepositury trainingRepositury)
+        public TrainingService(ITrainingRepository trainingRepositury)
         {
             _trainingRepositury = trainingRepositury;
         }
@@ -28,7 +28,7 @@ namespace Training_App.Application.Services
             return await _trainingRepositury.GetById(id);
         }
 
-        public async Task<Result> CreateTraining(TrainingRequest training)
+        public async Task<Result> CreateTraining(Training training)
         {
             return await _trainingRepositury.Create(training);
         }
@@ -41,11 +41,6 @@ namespace Training_App.Application.Services
         public async Task<Result> DeleteTraining(Guid id)
         {
             return await _trainingRepositury.Delete(id);
-        }
-
-        public Task<Result> CreateTraining(Training training)
-        {
-            throw new NotImplementedException();
         }
 
         Task<Result<IReadOnlyList<Training>>> ITrainingService.GetAllTrainings()

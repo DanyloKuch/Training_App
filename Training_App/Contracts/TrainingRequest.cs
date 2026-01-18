@@ -5,4 +5,8 @@
         DateTime Date,
         DateTime EndTime
     );
+    public record TrainingRequestCreate(
+       string Typename,
+       Guid ApplicationUserId
+   );
 }

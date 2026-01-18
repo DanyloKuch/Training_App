@@ -3,7 +3,7 @@ using Training_App.Domain.Models;
 
 namespace Training_App.DataAccess.Repository
 {
-    public interface ITrainingRepositury
+    public interface ITrainingRepository
     {
         Task<Result<Guid>> Create(Training training);
         Task<Result> Delete(Guid Id);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Training_App.Api.Contracts;
 using Training_App.Application.Services;
+using Training_App.Domain.Models;
 
 namespace Training_App.Controllers
 {
@@ -19,7 +20,11 @@ namespace Training_App.Controllers
         public async Task<ActionResult> GetAllTrainings()
         {
             var trainings = await _trainingService.GetAllTrainings();
-            return Ok(trainings);
+
+            var trainingsrespone = trainings.Value.Select(t => new TrainingResponse(
+                t.Id, t.Typename, t.Date, t.EndTime
+                ));
+            return Ok(trainingsrespone);
         }
 
         [HttpGet("{id}")]
@@ -31,18 +36,39 @@ namespace Training_App.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateTraining([FromBody] TrainingRequest training)
+        public async Task<ActionResult> CreateTraining([FromBody] TrainingRequestCreate training)
         {
-            var result = await _trainingService.CreateTraining(training);
+            var trainingmodel = Training.Create(
+                Guid.NewGuid(),
+                training.Typename,
+                DateTime.Today,
+                DateTime.Now,
+                training.ApplicationUserId
+                );
 
+            if (trainingmodel.IsFailure)
+            {
+                return BadRequest(trainingmodel.Error);
+            }
 
-            //if (!result.IsSuccess)
-            //{
-            //    return BadRequest(result.Error);
-            //}
-            return result.IsSuccess(result)
-                ? Ok()
-                : BadRequest(result.Error);
+            var result = await _trainingService.CreateTraining(trainingmodel.Value);
+
+            return Ok(result);
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult> UpdateTraining(Guid id, TrainingRequest training)
+        {
+            var res =  await _trainingService.UpdateTraining(id, training.Typename, training.Date, training.EndTime);
+            return Ok(res);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult> DeleteTraining(Guid id)
+        {
+            var res = await _trainingService.DeleteTraining(id);
+            return Ok(res);
+        }
+
     }
 }

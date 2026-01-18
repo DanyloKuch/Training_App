@@ -6,10 +6,10 @@ using Training_App.Domain.Models;
 
 namespace Training_App.DataAccess.Repository
 {
-    public class TrainingRepositury : ITrainingRepositury
+    public class TrainingRepository : ITrainingRepository
     {
         private readonly TrainingAppDbContext _context;
-        public TrainingRepositury(TrainingAppDbContext context)
+        public TrainingRepository(TrainingAppDbContext context)
         {
             _context = context;
         }
@@ -21,7 +21,7 @@ namespace Training_App.DataAccess.Repository
                 .ToListAsync();
 
             var trainings = trainingEntities
-                .Select(t => Training.Create(t.Id, t.Typename, t.Date, t.EndTime).Value)
+                .Select(t => Training.Create(t.Id, t.Typename, t.Date, t.EndTime, t.ApplicationUserEntityId).Value)
                 .ToList();
 
             return Result.Success<IReadOnlyList<Training>>(trainings);
@@ -38,7 +38,7 @@ namespace Training_App.DataAccess.Repository
                 return Result.Failure<Training>($"Training with id {id} not found.");
             }
 
-            var training = Training.Create(trainingEntity.Id, trainingEntity.Typename, trainingEntity.Date, trainingEntity.EndTime).Value;
+            var training = Training.Create(trainingEntity.Id, trainingEntity.Typename, trainingEntity.Date, trainingEntity.EndTime, trainingEntity.ApplicationUserEntityId).Value;
             return Result.Success(training);
         }
 
@@ -49,7 +49,8 @@ namespace Training_App.DataAccess.Repository
                 Id = training.Id,
                 Typename = training.Typename,
                 Date = training.Date,
-                EndTime = training.EndTime
+                EndTime = training.EndTime,
+                ApplicationUserEntityId = training.ApplicationUserId
             };
             await _context.Trainings.AddAsync(trainingEntity);
             await _context.SaveChangesAsync();

@@ -68,5 +68,20 @@ public class ExerciseController: ControllerBase
         return Ok(exerciseid);
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<Guid>> UpdateExercise(Guid id, [FromBody] ExerciseRequest request)
+    {
+         var updatedId = await _exercisesService.UpdateExercise(id, request.Name, request.Muscles, request.CountOfBasicSets, request.CountOfWurmUpSets, request.Weight);
+        return updatedId;
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult<Guid>> DeleteExercise(Guid id)
+    {
+        return await _exercisesService.DeleteExercise(id);
+    }
+
+
+
 }
 

@@ -16,6 +16,9 @@ namespace Training_App.DataAccess.Configuration
                 HasMany(t => t.ExerciseEntity)
                 .WithMany(e => e.Training);
 
+            builder.Property(t => t.ApplicationUserEntityId)
+           .HasColumnName("ApplicationUserId");
+
             builder.
                 HasOne(t => t.ApplicationUserEntity)
                 .WithMany(au => au.TrainingEntity)
