@@ -13,16 +13,16 @@ namespace Training_App.DataAccess.Configuration
             builder.HasKey(t => t.Id);
 
             builder.
-                HasMany(t => t.ExerciseEntity)
+                HasMany(t => t.Exercise)
                 .WithMany(e => e.Training);
 
-            builder.Property(t => t.ApplicationUserEntityId)
+            builder.Property(t => t.ApplicationUserId)
            .HasColumnName("ApplicationUserId");
 
             builder.
-                HasOne(t => t.ApplicationUserEntity)
-                .WithMany(au => au.TrainingEntity)
-                .HasForeignKey(t => t.ApplicationUserEntityId);
+                HasOne(t => t.ApplicationUser)
+                .WithMany(au => au.Training)
+                .HasForeignKey(t => t.ApplicationUserId);
 
         }
     }

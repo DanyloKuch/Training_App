@@ -21,7 +21,7 @@ namespace Training_App.DataAccess.Repository
                 .ToListAsync();
 
             var trainings = trainingEntities
-                .Select(t => Training.Create(t.Id, t.Typename, t.Date, t.EndTime, t.ApplicationUserEntityId).Value)
+                .Select(t => Training.Create(t.Id, t.Typename, t.Date, t.EndTime, t.ApplicationUserId).Value)
                 .ToList();
 
             return Result.Success<IReadOnlyList<Training>>(trainings);
@@ -38,7 +38,7 @@ namespace Training_App.DataAccess.Repository
                 return Result.Failure<Training>($"Training with id {id} not found.");
             }
 
-            var training = Training.Create(trainingEntity.Id, trainingEntity.Typename, trainingEntity.Date, trainingEntity.EndTime, trainingEntity.ApplicationUserEntityId).Value;
+            var training = Training.Create(trainingEntity.Id, trainingEntity.Typename, trainingEntity.Date, trainingEntity.EndTime, trainingEntity.ApplicationUserId).Value;
             return Result.Success(training);
         }
 
@@ -50,7 +50,7 @@ namespace Training_App.DataAccess.Repository
                 Typename = training.Typename,
                 Date = training.Date,
                 EndTime = training.EndTime,
-                ApplicationUserEntityId = training.ApplicationUserId
+                ApplicationUserId = training.ApplicationUserId
             };
             await _context.Trainings.AddAsync(trainingEntity);
             await _context.SaveChangesAsync();

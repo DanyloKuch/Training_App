@@ -28,7 +28,7 @@ namespace Training_App.Application.Services
             return await _trainingRepositury.GetById(id);
         }
 
-        public async Task<Result> CreateTraining(Training training)
+        public async Task<Result<Guid>> CreateTraining(Training training)
         {
             return await _trainingRepositury.Create(training);
         }

@@ -6,8 +6,8 @@
         public string Typename { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public DateTime EndTime { get; set; }
-        public List<ExerciseEntity> ExerciseEntity { get; set; }
-        public Guid ApplicationUserEntityId { get; set; }
-        public ApplicationUserEntity ApplicationUserEntity { get; set; }
+        public List<ExerciseEntity> Exercise { get; set; }
+        public Guid ApplicationUserId { get; set; }
+        public ApplicationUserEntity ApplicationUser { get; set; }
     }
 }

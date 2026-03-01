@@ -11,9 +11,9 @@ namespace Training_App.DataAccess.Configuration
             builder.HasKey(au => au.Id);
 
             builder.
-                HasMany(au => au.TrainingEntity)
-                .WithOne(t => t.ApplicationUserEntity)
-                .HasForeignKey(t => t.ApplicationUserEntityId);
+                HasMany(au => au.Training)
+                .WithOne(t => t.ApplicationUser)
+                .HasForeignKey(t => t.ApplicationUserId);
 
         }
     }

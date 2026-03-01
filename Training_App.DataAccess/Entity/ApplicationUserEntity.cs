@@ -10,6 +10,6 @@ namespace Training_App.DataAccess.Entity
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }
-        public List<TrainingEntity> TrainingEntity { get; set; }
+        public List<TrainingEntity> Training { get; set; }
     }
 }

@@ -14,6 +14,6 @@ namespace Training_App.DataAccess.Entity
         public int CountOfBasicSets { get; set; }
         public int CountOfWurmUpSets { get; set; }
         public decimal Weight { get; set; }
-        public List<TrainingEntity> Training { get; set; } = new List<TrainingEntity>();
+        public List<TrainingEntity> Training { get; set; }
     }
 }

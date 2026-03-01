@@ -12,7 +12,7 @@ namespace Training_App.DataAccess.Configuration
 
             builder.
                 HasMany(e => e.Training)
-                .WithMany(t => t.ExerciseEntity);
+                .WithMany(t => t.Exercise);
         }
     }
 }

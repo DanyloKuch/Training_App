@@ -53,7 +53,13 @@ namespace Training_App.Controllers
 
             var result = await _trainingService.CreateTraining(trainingmodel.Value);
 
-            return Ok(result);
+            if (result.IsFailure)
+            {
+                // Повертаємо тільки рядок з помилкою, а не весь об'єкт Result
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
         }
 
         [HttpPut("{id:guid}")]

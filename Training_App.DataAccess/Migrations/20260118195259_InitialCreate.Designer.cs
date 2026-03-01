@@ -12,8 +12,8 @@ using Training_App.DataAccess;
 namespace Training_App.DataAccess.Migrations
 {
     [DbContext(typeof(TrainingAppDbContext))]
-    [Migration("20260109200749_DeleteDurationOfTraining")]
-    partial class DeleteDurationOfTraining
+    [Migration("20260118195259_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,13 +27,13 @@ namespace Training_App.DataAccess.Migrations
 
             modelBuilder.Entity("ExerciseEntityTrainingEntity", b =>
                 {
-                    b.Property<Guid>("ExerciseEntityId")
+                    b.Property<Guid>("ExerciseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TrainingId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ExerciseEntityId", "TrainingId");
+                    b.HasKey("ExerciseId", "TrainingId");
 
                     b.HasIndex("TrainingId");
 
@@ -89,8 +89,9 @@ namespace Training_App.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ApplicationUserEntityId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ApplicationUserId");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -104,7 +105,7 @@ namespace Training_App.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserEntityId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Trainings");
                 });
@@ -113,7 +114,7 @@ namespace Training_App.DataAccess.Migrations
                 {
                     b.HasOne("Training_App.DataAccess.Entity.ExerciseEntity", null)
                         .WithMany()
-                        .HasForeignKey("ExerciseEntityId")
+                        .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -126,18 +127,18 @@ namespace Training_App.DataAccess.Migrations
 
             modelBuilder.Entity("Training_App.DataAccess.Entity.TrainingEntity", b =>
                 {
-                    b.HasOne("Training_App.DataAccess.Entity.ApplicationUserEntity", "ApplicationUserEntity")
-                        .WithMany("TrainingEntity")
-                        .HasForeignKey("ApplicationUserEntityId")
+                    b.HasOne("Training_App.DataAccess.Entity.ApplicationUserEntity", "ApplicationUser")
+                        .WithMany("Training")
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUserEntity");
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Training_App.DataAccess.Entity.ApplicationUserEntity", b =>
                 {
-                    b.Navigation("TrainingEntity");
+                    b.Navigation("Training");
                 });
 #pragma warning restore 612, 618
         }
