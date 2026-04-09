@@ -10,20 +10,16 @@ namespace Training_App.DataAccess.Configuration
     {
         public void Configure(EntityTypeBuilder<TrainingEntity> builder)
         {
+            
             builder.HasKey(t => t.Id);
 
-            builder.
-                HasMany(t => t.Exercise)
-                .WithMany(e => e.Training);
-
-            builder.Property(t => t.ApplicationUserId)
-           .HasColumnName("ApplicationUserId");
-
-            builder.
-                HasOne(t => t.ApplicationUser)
-                .WithMany(au => au.Training)
-                .HasForeignKey(t => t.ApplicationUserId);
-
+            builder.HasMany(e => e.ExerciseSets)
+                .WithOne(e => e.Training)
+                .HasForeignKey(e => e.TrainingId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Property(e => e.Status)
+                .IsRequired();
         }
     }
 }

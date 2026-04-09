@@ -1,37 +1,29 @@
 ﻿using System;
+using CSharpFunctionalExtensions;
 
 
 namespace Training_App.Domain.Models
 {
     public class Exercise
-    {
-        private Exercise(Guid id, string name, string muscles, int countOfBasicSets, int countOfWurmUpSets, decimal weight)
+    { 
+        private Guid Id { get; }
+        private Guid UserId { get; }
+        private string Name { get; }
+        private string Description { get; }
+        private Guid CreatedByUserId { get; }
+        private IReadOnlyCollection<ExerciseMuscle> Muscle { get; }
+        private Exercise(Guid id, Guid userId, string name, string description, Guid createdByUserId)
         {
             Id = id;
             Name = name;
-            Muscles = muscles;
-            CountOfBasicSets = countOfBasicSets;
-            CountOfWurmUpSets = countOfWurmUpSets;
-            Weight = weight;
+            Description = description;  
+            CreatedByUserId = createdByUserId;
+            UserId = userId;
         }
-        public Guid Id { get; }
-        public string Name { get; } = string.Empty;
-        public string Muscles { get; } = string.Empty;
-        public int CountOfBasicSets { get; }
-        public int CountOfWurmUpSets { get; }
-        public decimal Weight { get; } 
 
-        public static (Exercise Exercise, string Error) Create(Guid id, string name, string muscles, int countOfBasicSets, int countOfWurmUpSets, decimal weight)
+        public static Result<Exercise> Create(Guid id, Guid userId, string name, string description, Guid createdByUserId)
         {
-            var error = string.Empty;
-
-            if (string.IsNullOrEmpty(name))
-            {
-                return (null!, $"'{nameof(Exercise)} cannot be null or empty");
-            }
-            var exercise = new Exercise(id, name, muscles, countOfBasicSets, countOfWurmUpSets, weight);
-
-            return (exercise, error);
+            return Result.Success<Exercise>(new Exercise(userId, userId, name, description, createdByUserId));
         }
     }
 }

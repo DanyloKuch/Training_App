@@ -8,11 +8,17 @@ namespace Training_App.DataAccess.Configuration
     {
         public void Configure(EntityTypeBuilder<ExerciseEntity> builder)
         {
+            builder.ToTable("Exercises");
             builder.HasKey(e => e.Id);
 
-            builder.
-                HasMany(e => e.Training)
-                .WithMany(t => t.Exercise);
+            builder.HasMany(e => e.ExerciseSets)
+                .WithOne(e => e.Exercise)
+                .HasForeignKey(e => e.ExerciseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(e => e.ExerciseMuscles)
+                .WithOne(e => e.Exercise)
+                .HasForeignKey(e => e.ExerciseId);
         }
     }
 }

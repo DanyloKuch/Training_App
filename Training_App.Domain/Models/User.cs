@@ -1,6 +1,6 @@
 ﻿namespace Training_App.Domain.Models
 {
-    public class ApplicationUser
+    public class User
     {
         public Guid Id { get; set; }
         public string UserName { get; set; } = string.Empty;

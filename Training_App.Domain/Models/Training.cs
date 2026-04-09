@@ -1,32 +1,49 @@
 ﻿using CSharpFunctionalExtensions;
+using Training_App.Domain.Enum;
 
 namespace Training_App.Domain.Models
 {
     public class Training
     {
-        private Training(Guid id, string typename, DateTime date, DateTime endTime, Guid applicationUserId) 
+        private Training(Guid id, Guid userId, string typename, DateTime scheduledDate, DateTime startTime, 
+            DateTime endTime, Status status,
+            string notes, IEnumerable<ExerciseSet> sets) 
         {
             Id = id;
+            UserId = userId;
             Typename = typename;
-            Date = date;
+            ScheduledDate = scheduledDate;
+            StartTime = startTime;
             EndTime = endTime;
-            ApplicationUserId = applicationUserId;
+            Status = status;
+            Notes = notes;
+            _sets.AddRange(sets);
         }
         public Guid Id { get;}
-        public Guid ApplicationUserId { get; }
+        public Guid UserId { get; }
         public string Typename { get;} = string.Empty;
-        public DateTime Date { get; }
+        public DateTime ScheduledDate { get; }
+        public DateTime StartTime { get;}
         public DateTime EndTime { get;}
-
-        public static Result<Training> Create(Guid id, string typename, DateTime date, DateTime endTime, Guid applicationUserId)
+        public Status Status { get; }
+        public string Notes { get; }
+        public readonly List<ExerciseSet> _sets = new();
+        public IReadOnlyCollection<ExerciseSet> Sets => _sets.AsReadOnly();
+        public static Result<Training> Create(Guid id, Guid userId, string typename, DateTime scheduledDate, DateTime startTime,
+            DateTime endTime, Status status, string notes, IEnumerable<ExerciseSet> sets)
         {
             if (string.IsNullOrEmpty(typename))
             {
                 return Result.Failure<Training>($"'{nameof(Training)} cannot be null or empty");
             }
-            var training = new Training(id, typename, DateTime.Today, DateTime.Now, applicationUserId);
 
-            return Result.Success<Training>(training);
+            return Result.Success<Training>(new Training(id,  userId, typename, scheduledDate, startTime, endTime, status, notes, sets));
         }
+        public static Result<Training> Load(Guid id, Guid userId, string typename, DateTime scheduledDate, DateTime startTime,
+            DateTime endTime, Status status, string notes, IEnumerable<ExerciseSet> sets)
+        {
+            return Result.Success<Training>(new Training(id,  userId, typename, scheduledDate, startTime, endTime, status, notes, sets));
+        }
+        
     }
 }

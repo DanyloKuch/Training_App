@@ -1,56 +1,128 @@
-﻿using CSharpFunctionalExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Training_App.DataAccess.Repository;
+﻿using System.Collections.ObjectModel;
+using AutoMapper;
+using CSharpFunctionalExtensions;
+using Training_App.Application.Contracts;
+using Training_App.Application.Interfaces;
+using Training_App.Domain.Abstraction;
 using Training_App.Domain.Models;
 
 namespace Training_App.Application.Services
 {
-    public class TrainingService : ITrainingService
+   public class TrainingService : ITrainingService
     {
-        private readonly ITrainingRepository _trainingRepositury;
+        private readonly ITrainingRepository _trainingRepository;
+        private readonly ICurrentUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TrainingService(ITrainingRepository trainingRepositury)
+        public TrainingService(ITrainingRepository trainingRepository, ICurrentUserService userService, IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _trainingRepositury = trainingRepositury;
+            _trainingRepository = trainingRepository;
+            _userService = userService;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
+        }
+        
+         public async Task<Result<Guid>> CreateTraining(TrainingRequest training)
+        {
+            var userId = _userService.UserId;
+            var result = Training.Create(
+                Guid.NewGuid(),
+                userId,
+                training.Typename,
+                training.ScheduledDate,
+                training.StartTime,
+                training.EndTime,
+                training.Status,
+                training.Notes,
+                new List<ExerciseSet>()
+            );
+
+            var trainingdomain = result.Value;
+
+            var sets = training.ExerciseSets.Select(ex => ExerciseSet.Create(
+                Guid.NewGuid(),
+                trainingdomain.Id,
+                ex.ExerciseId,
+                ex.Weight,
+                ex.Reps,
+                ex.SetNumber,
+                ex.SetType
+                ).Value).ToList();
+            
+            trainingdomain._sets.AddRange(sets);
+            await _trainingRepository.Create(trainingdomain);
+            await _unitOfWork.SaveChangesAsync();
+            
+            return Result.Success(trainingdomain.Id);
+        }
+ 
+        public async Task<Result<IReadOnlyList<TrainingResponse>>> GetAllTrainings()
+        {
+            var  userId = _userService.UserId;
+            var trainings = await _trainingRepository.GetAll(userId);
+            var response = _mapper.Map<IReadOnlyList<TrainingResponse>>(trainings.Value);
+            
+            return Result.Success(response);
         }
 
-        public async Task<Result<IReadOnlyList<Training>>> GetAllTrainings()
+        public async Task<Result<IReadOnlyList<TrainingResponse>>> GetTrainingById(Guid id)
         {
-            return await _trainingRepositury.GetAll();
+            var  userId = _userService.UserId;
+            var training = await _trainingRepository.GetById(userId, id);
+            
+            var response = _mapper.Map<IReadOnlyList<TrainingResponse>>(training.Value);
+            return Result.Success(response);
         }
 
-        public async Task<Result<Training>> GetTrainingById(Guid id)
+        public async Task<Result<TrainingResponse>> UpdateTraining(Guid Id, TrainingRequest request)
         {
-            return await _trainingRepositury.GetById(id);
-        }
+            var userId = _userService.UserId;
+            var existingResult = await _trainingRepository.GetById(userId, Id);
+    
+            if (existingResult.IsFailure)
+                return Result.Failure<TrainingResponse>("Training not found");
+    
+            var existingTraining = existingResult.Value;
+    
+            // Використовуємо Id з реквесту, а не генеруємо новий!
+            var sets = request.ExerciseSets.Select(ex => ExerciseSet.Create(
+                ex.Id == Guid.Empty ? Guid.NewGuid() : ex.Id, // Перевірка на новий сет
+                Id, 
+                ex.ExerciseId,
+                ex.Weight, 
+                ex.Reps, 
+                ex.SetNumber, 
+                ex.SetType).Value).ToList();
 
-        public async Task<Result<Guid>> CreateTraining(Training training)
-        {
-            return await _trainingRepositury.Create(training);
-        }
-
-        public async Task<Result> UpdateTraining(Guid id, string typename, DateTime date, DateTime endTime)
-        {
-            return await _trainingRepositury.Update(id, typename, date, endTime);
+            var updatedTraining = Training.Create(
+                Id,
+                userId,
+                request.Typename,
+                request.ScheduledDate,
+                request.StartTime,
+                request.EndTime,
+                request.Status,
+                request.Notes,
+                sets
+            );
+    
+            if (updatedTraining.IsFailure)
+                return Result.Failure<TrainingResponse>(updatedTraining.Error);
+    
+            await _trainingRepository.Update(updatedTraining.Value);
+            await _unitOfWork.SaveChangesAsync(); // Тепер спрацює без помилок
+    
+            return Result.Success(_mapper.Map<TrainingResponse>(updatedTraining.Value));
         }
 
         public async Task<Result> DeleteTraining(Guid id)
         {
-            return await _trainingRepositury.Delete(id);
+            var userId = _userService.UserId;
+            return await _trainingRepository.Delete(userId, id);
+            await _unitOfWork.SaveChangesAsync();
+            return Result.Success();
         }
 
-        Task<Result<IReadOnlyList<Training>>> ITrainingService.GetAllTrainings()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<Result<Training>> ITrainingService.GetTrainingById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
