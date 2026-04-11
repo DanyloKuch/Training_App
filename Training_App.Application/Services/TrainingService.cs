@@ -26,7 +26,7 @@ namespace Training_App.Application.Services
          public async Task<Result<Guid>> CreateTraining(TrainingRequest training)
         {
             var userId = _userService.UserId;
-            var result = Training.Create(
+            var trainingDomain = Training.Create(
                 Guid.NewGuid(),
                 userId,
                 training.Typename,
@@ -37,24 +37,27 @@ namespace Training_App.Application.Services
                 training.Notes,
                 new List<ExerciseSet>()
             );
-
-            var trainingdomain = result.Value;
-
-            var sets = training.ExerciseSets.Select(ex => ExerciseSet.Create(
-                Guid.NewGuid(),
-                trainingdomain.Id,
-                ex.ExerciseId,
-                ex.Weight,
-                ex.Reps,
-                ex.SetNumber,
-                ex.SetType
-                ).Value).ToList();
             
-            trainingdomain._sets.AddRange(sets);
-            await _trainingRepository.Create(trainingdomain);
+            if (trainingDomain.IsFailure) return Result.Failure<Guid>(trainingDomain.Error);
+
+            var trainingdomain = trainingDomain.Value;
+
+            var exerciseSets = new List<ExerciseSet>();
+            foreach (var ex in training.ExerciseSets)
+            {
+                var setRes = ExerciseSet.Create(Guid.NewGuid(), trainingdomain.Id, ex.ExerciseId, ex.Weight, ex.Reps, ex.SetNumber, ex.SetType);
+        
+                if (setRes.IsFailure) return Result.Failure<Guid>($"Set error: {setRes.Error}");
+        
+                exerciseSets.Add(setRes.Value);
+            }
+            
+            trainingdomain._sets.AddRange(exerciseSets);
+            var result = await _trainingRepository.Create(trainingdomain);
+            if(result.IsFailure) return Result.Failure<Guid>(result.Error);
             await _unitOfWork.SaveChangesAsync();
             
-            return Result.Success(trainingdomain.Id);
+            return Result.Success(result.Value);
         }
  
         public async Task<Result<IReadOnlyList<TrainingResponse>>> GetAllTrainings()
@@ -66,16 +69,16 @@ namespace Training_App.Application.Services
             return Result.Success(response);
         }
 
-        public async Task<Result<IReadOnlyList<TrainingResponse>>> GetTrainingById(Guid id)
+        public async Task<Result<TrainingResponse>> GetTrainingById(Guid id)
         {
             var  userId = _userService.UserId;
             var training = await _trainingRepository.GetById(userId, id);
             
-            var response = _mapper.Map<IReadOnlyList<TrainingResponse>>(training.Value);
+            var response = _mapper.Map<TrainingResponse>(training.Value);
             return Result.Success(response);
         }
 
-        public async Task<Result<TrainingResponse>> UpdateTraining(Guid Id, TrainingRequest request)
+        public async Task<Result<TrainingResponse>> UpdateTraining(Guid Id, UpdateTrainingRequest request)
         {
             var userId = _userService.UserId;
             var existingResult = await _trainingRepository.GetById(userId, Id);
@@ -111,7 +114,7 @@ namespace Training_App.Application.Services
                 return Result.Failure<TrainingResponse>(updatedTraining.Error);
     
             await _trainingRepository.Update(updatedTraining.Value);
-            await _unitOfWork.SaveChangesAsync(); // Тепер спрацює без помилок
+            await _unitOfWork.SaveChangesAsync();
     
             return Result.Success(_mapper.Map<TrainingResponse>(updatedTraining.Value));
         }
@@ -119,7 +122,8 @@ namespace Training_App.Application.Services
         public async Task<Result> DeleteTraining(Guid id)
         {
             var userId = _userService.UserId;
-            return await _trainingRepository.Delete(userId, id);
+            var result = await _trainingRepository.Delete(userId, id);
+            if (result.IsFailure) return result;
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }

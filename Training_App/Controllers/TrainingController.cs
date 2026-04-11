@@ -28,8 +28,7 @@ namespace Training_App.Controllers
 
             if (result.IsFailure)
             {
-                return BadRequest(result.Error);
-            }
+                return BadRequest(new { error = result.Error });            }
 
             return Ok(result.Value);
         }
@@ -53,7 +52,7 @@ namespace Training_App.Controllers
 
 
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult> UpdateTraining(Guid id, TrainingRequest request)
+        public async Task<ActionResult> UpdateTraining(Guid id, UpdateTrainingRequest request)
         {
             var res =  await _trainingService.UpdateTraining(id, request);
             if (res.IsFailure) return NotFound(res.Error);

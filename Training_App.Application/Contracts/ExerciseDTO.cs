@@ -12,8 +12,16 @@ public record ExerciseSetResponse(
     SetType SetType
 );
 
-public record ExerciseSetRequest( 
+public record UpdateExerciseSetRequest( 
     Guid Id,
+    Guid ExerciseId,
+    decimal Weight,
+    int Reps,
+    int SetNumber,
+    SetType SetType
+);
+
+public record ExerciseSetRequest( 
     Guid ExerciseId,
     decimal Weight,
     int Reps,

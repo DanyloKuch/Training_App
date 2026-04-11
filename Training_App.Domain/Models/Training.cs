@@ -29,15 +29,25 @@ namespace Training_App.Domain.Models
         public string Notes { get; }
         public readonly List<ExerciseSet> _sets = new();
         public IReadOnlyCollection<ExerciseSet> Sets => _sets.AsReadOnly();
-        public static Result<Training> Create(Guid id, Guid userId, string typename, DateTime scheduledDate, DateTime startTime,
-            DateTime endTime, Status status, string notes, IEnumerable<ExerciseSet> sets)
+        public static Result<Training> Create(Guid id, Guid userId, string typename, DateTime scheduledDate, 
+            DateTime startTime, DateTime endTime, Status status, string notes, IEnumerable<ExerciseSet> sets)
         {
-            if (string.IsNullOrEmpty(typename))
-            {
-                return Result.Failure<Training>($"'{nameof(Training)} cannot be null or empty");
-            }
+            if (string.IsNullOrWhiteSpace(typename))
+                return Result.Failure<Training>("Training name cannot be empty.");
 
-            return Result.Success<Training>(new Training(id,  userId, typename, scheduledDate, startTime, endTime, status, notes, sets));
+            if (typename.Length > 100)
+                return Result.Failure<Training>("Training name cannot exceed 100 characters.");
+
+            if (scheduledDate == default)
+                return Result.Failure<Training>("Scheduled date is required.");
+
+            if (endTime != default && startTime != default && endTime < startTime)
+                return Result.Failure<Training>("End time cannot be earlier than start time.");
+
+            if (notes?.Length > 1000)
+                return Result.Failure<Training>("Notes cannot exceed 1000 characters.");
+
+            return Result.Success<Training>(new Training(id, userId, typename, scheduledDate, startTime, endTime, status, notes, sets));
         }
         public static Result<Training> Load(Guid id, Guid userId, string typename, DateTime scheduledDate, DateTime startTime,
             DateTime endTime, Status status, string notes, IEnumerable<ExerciseSet> sets)

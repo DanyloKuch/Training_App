@@ -109,7 +109,7 @@ namespace Training_App.DataAccess.Repository
         {
             var trainingEntity = await _context.Trainings
                 .Include(t => t.ExerciseSets)
-                .FirstOrDefaultAsync(t => t.Id == training.Id);
+                .FirstOrDefaultAsync(t => t.Id == training.Id && t.UserId == training.UserId);
    
             if (trainingEntity == null) 
                 return Result.Failure($"Training not found.");
@@ -154,7 +154,7 @@ namespace Training_App.DataAccess.Repository
                     // Додаємо новий сет, якого раніше не було
                     trainingEntity.ExerciseSets.Add(new ExerciseSetEntity
                     {
-                        Id = set.Id,
+                        Id = set.Id == Guid.Empty ? Guid.NewGuid() : set.Id,
                         TrainingId = training.Id,
                         ExerciseId = set.ExerciseId,
                         Weight = set.Weight,

@@ -7,8 +7,8 @@ namespace Training_App.Application.Interfaces;
 public interface ITrainingService
 {
     Task<Result<IReadOnlyList<TrainingResponse>>> GetAllTrainings();
-    Task<Result<IReadOnlyList<TrainingResponse>>> GetTrainingById(Guid id);
+    Task<Result<TrainingResponse>> GetTrainingById(Guid id);
     Task<Result<Guid>> CreateTraining(TrainingRequest training);
-    Task<Result<TrainingResponse>> UpdateTraining(Guid Id, TrainingRequest request);
+    Task<Result<TrainingResponse>> UpdateTraining(Guid Id, UpdateTrainingRequest request);
     Task<Result> DeleteTraining(Guid id);
 }
