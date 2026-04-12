@@ -4,9 +4,9 @@ using Training_App.DataAccess.Entity;
 
 namespace Training_App.DataAccess.Configuration;
 
-public class MusclesConfiguration : IEntityTypeConfiguration<MusclesEnity>
+public class MusclesConfiguration : IEntityTypeConfiguration<MusclesEntity>
 {
-    public void Configure(EntityTypeBuilder<MusclesEnity> builder)
+    public void Configure(EntityTypeBuilder<MusclesEntity> builder)
     {
         builder.ToTable("Muscles");
         

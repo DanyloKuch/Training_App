@@ -6,5 +6,5 @@ public class ExerciseMusclesEntity
     public Guid MuscleId { get; set; }
     public bool IsPrimary { get; set; }
     public ExerciseEntity Exercise { get; set; }
-    public MusclesEnity Muscle { get; set; }
+    public MusclesEntity Muscle { get; set; }
 }

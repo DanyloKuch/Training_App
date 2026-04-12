@@ -48,7 +48,7 @@ builder.Services.AddIdentityApiEndpoints<UserEntity>()
     .AddEntityFrameworkStores<TrainingAppDbContext>();
 
 // builder.Services.AddScoped<IExercisesService, ExercisesService>();
-// builder.Services.AddScoped<IExercisesRepository, ExercisesRepository>();
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITrainingService, TrainingService>();
 builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
@@ -57,8 +57,10 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthService, AuthService >();
 
 builder.Services.AddAutoMapper(cfg =>
-    cfg.AddProfile<TrainingMappingProfile>());
-
+{
+    cfg.AddProfile<TrainingMappingProfile>();
+    cfg.AddProfile<ExerciseMappingProfile>();
+});
 
 var app = builder.Build();
 

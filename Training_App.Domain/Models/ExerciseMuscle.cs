@@ -4,12 +4,12 @@ namespace Training_App.Domain.Models;
 
 public class ExerciseMuscle
 {
-    private bool IsPrimary { get;}
+    public bool IsPrimary { get;}
     public Muscle Muscle { get; }
 
     private ExerciseMuscle(bool isPrimary, Muscle muscle)
     {
-        isPrimary = IsPrimary;
+        IsPrimary = isPrimary;  
         Muscle = muscle;
     }
 

@@ -12,5 +12,7 @@ namespace Training_App.DataAccess.Entity
     {
         public ICollection<TrainingEntity> Training { get; set; }
         public ICollection<ExerciseEntity> Exercises { get; set; }
+        public ICollection<MusclesEntity> Muscles { get; set; } 
+
     }
 }

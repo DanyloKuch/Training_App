@@ -5,15 +5,26 @@ public class Muscle
 {
     public Guid Id { get; }
     public string Name { get; }
-    private Muscle(Guid id, string name)
+    public Guid CreatedByUserId { get; }
+
+    private Muscle(Guid id, string name, Guid createdByUserId)
     {
         Id = id;
-        Name = name; 
+        Name = name;
+        CreatedByUserId = createdByUserId;
     }
 
-    public static Result<Muscle> Create(Guid id, string name)
+    public static Result<Muscle> Create(Guid id, string name, Guid createdByUserId)
     {
-        if (string.IsNullOrWhiteSpace(name)) return Result.Failure<Muscle>($"Name {name} is empty");
-        return Result.Success<Muscle>(new Muscle(id, name));
+        if (string.IsNullOrWhiteSpace(name))
+            return Result.Failure<Muscle>("Muscle name cannot be empty.");
+
+        if (name.Length > 100)
+            return Result.Failure<Muscle>("Muscle name cannot exceed 100 characters.");
+
+        return Result.Success(new Muscle(id, name, createdByUserId));
     }
+
+    public static Result<Muscle> Load(Guid id, string name, Guid createdByUserId)
+        => Result.Success(new Muscle(id, name, createdByUserId));
 }

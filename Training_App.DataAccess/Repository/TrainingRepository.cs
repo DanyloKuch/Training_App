@@ -17,7 +17,7 @@ namespace Training_App.DataAccess.Repository
             _context = context;
         }
 
-        public Result<Training> MapToDomain(TrainingEntity training)
+        private Result<Training> MapToDomain(TrainingEntity training)
         {
             var sets = training.ExerciseSets
                 .Select(s => ExerciseSet.Create(

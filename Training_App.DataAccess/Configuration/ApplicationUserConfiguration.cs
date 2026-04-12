@@ -17,9 +17,15 @@ namespace Training_App.DataAccess.Configuration
             
             builder.
                 HasMany(au => au.Exercises)
-                .WithOne(e => e.User)
-                .HasForeignKey(e => e.UserId)
+                .WithOne(e => e.CreatedBy)
+                .HasForeignKey(e => e.CreatedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            builder
+                .HasMany(au => au.Muscles)
+                .WithOne(m => m.CreatedBy)
+                .HasForeignKey(m => m.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict); 
 
         }
     }

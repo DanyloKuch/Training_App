@@ -16,7 +16,7 @@ public class TrainingAppDbContext : IdentityDbContext<UserEntity, IdentityRole<G
     public DbSet<ExerciseEntity> Exercises => Set<ExerciseEntity>();
     public DbSet<ExerciseMusclesEntity> ExercisesMuscles => Set<ExerciseMusclesEntity>();
     public DbSet<ExerciseSetEntity> ExersiseSets => Set<ExerciseSetEntity>();
-    public DbSet<MusclesEnity>  MusclesEnities => Set<MusclesEnity>();
+    public DbSet<MusclesEntity>  MusclesEnities => Set<MusclesEntity>();
     
 
 

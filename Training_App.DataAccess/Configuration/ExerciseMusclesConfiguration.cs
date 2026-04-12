@@ -11,6 +11,15 @@ public class ExerciseMusclesConfiguration : IEntityTypeConfiguration<ExerciseMus
         builder.ToTable("ExerciseMuscles");
         
         builder.HasKey(e => new { e.ExerciseId, e.MuscleId });
+
+        builder.HasOne(em => em.Exercise)
+            .WithMany(e => e.ExerciseMuscles)
+            .HasForeignKey(em => em.ExerciseId)
+            .OnDelete(DeleteBehavior.Cascade);  // видаляємо зв'язки якщо вправа видалена
+
+        builder.HasOne(em => em.Muscle)
+            .WithMany(m => m.ExerciseMuscles)
+            .HasForeignKey(em => em.MuscleId)
+            .OnDelete(DeleteBehavior.Restrict);  // не можна видалити м'яз якщо є вправи
     }
-    
 }
